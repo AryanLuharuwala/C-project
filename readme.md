@@ -1,0 +1,1 @@
+we use read stdin_filno to take input but the terminal takes input and send to the file only when the user presses enter which is fine for the program but for text editor we need every keypress to be reflected and that needs a lot of flags to be removed
