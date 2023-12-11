@@ -2,18 +2,23 @@
 #include <unistd.h>
 #include <termios.h>
 
+struct termios orig_termios;
+
+void disableRawMode(){
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
+}
+
 void enableRawMode(){
-	struct termios raw;
+	tcgetattr(STDIN_FILENO, &orig_termios);
+        atexit(disableRawMode); //executes automatically when the program exits <stdlib.h>
 
-	tcgetattr(STDIN_FILENO, &raw);
-
+	struct termios raw = orig_termios;
 	raw.c_lflag &= ~(ECHO);
 
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 
 }
-//the CHO feature causes each key to be printed to the terminal, useful in canonical mode, gets in way when we want to render userinterface in raw mode.
-//this program just doesnt print waht we are typing (writing a password in terminal) 
+ 
 int main(){
 
 	enableRawMode();
