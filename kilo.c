@@ -16,10 +16,11 @@ void enableRawMode(){
 
 	struct termios raw = orig_termios;
 	raw.c_lflag &= ~(ECHO | ICANON | ISIG);
-
+	raw.c_iflag &= ~(IXON);
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 
 }
+//IXON-Ctrl-S,Q Software flow control XON,XOFF
 //ISIG-SIGINT, SIGTSTP Ctrl-C,Z
 //ICANON-Canonical mode
 //ECHO-print in terminal
