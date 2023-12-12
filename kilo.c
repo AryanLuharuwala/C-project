@@ -15,12 +15,14 @@ void enableRawMode(){
         atexit(disableRawMode); //executes automatically when the program exits <stdlib.h>
 
 	struct termios raw = orig_termios;
-	raw.c_lflag &= ~(ECHO | ICANON);
+	raw.c_lflag &= ~(ECHO | ICANON | ISIG);
 
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 
 }
- 
+//ISIG-SIGINT, SIGTSTP Ctrl-C,Z
+//ICANON-Canonical mode
+//ECHO-print in terminal
 int main(){
 
 	enableRawMode();
