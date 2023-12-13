@@ -15,8 +15,9 @@ void enableRawMode(){
         atexit(disableRawMode); //executes automatically when the program exits <stdlib.h>
 
 	struct termios raw = orig_termios;
-	raw.c_lflag &= ~(ECHO | ICANON | ISIG);
-	raw.c_iflag &= ~(IXON);
+	raw.c_iflag &= ~(IXON | ICRNL);
+	raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
+	raw.c_oflag &= ~(OPOST);
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 
 }
