@@ -3,15 +3,21 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
-
+#include <errno.h>
 struct termios orig_termios;
 
+
+void die(const char *s){
+	perror(s);
+	exit(1);
+}
 void disableRawMode(){
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
+	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios)==-1)
+		die("tcsetattr");
 }
 
 void enableRawMode(){
-	tcgetattr(STDIN_FILENO, &orig_termios);
+	if(tcgetattr(STDIN_FILENO, &orig_termios)==-1) die("tcsgetattr");
         atexit(disableRawMode); //executes automatically when the program exits <stdlib.h>
 
 	struct termios raw = orig_termios;
@@ -21,7 +27,7 @@ void enableRawMode(){
 	raw.c_cflag &= ~(CS8);
 	raw.c_cc[VMIN] = 1;
 	raw.c_cc[VTIME] = 1;
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw)==-1) die("tcsetattr");
 
 }
 //VMIN sets min number of bytes needed before read() can return
@@ -40,7 +46,7 @@ int main(){
 	
 	while(1){
 	char c;
-	read(STDIN_FILENO, &c, 1);
+	if(read(STDIN_FILENO, &c, 1)==-1 && errno != EAGAIN) die("read");
 	  if (iscntrl(c)){
 	    printf("%d\r\n",c);
 	  } else{
@@ -50,3 +56,6 @@ int main(){
 	}
  	return 0;
 }
+//errno and EAGAIN come from <errno.h>
+//tcsetattr(), tcgetattr() and read() all return -1 on failure, and set errno value to indicate the error
+//in cygwin when read() times out it returns -1 with an errno of EAGAIN instead of 0, 
