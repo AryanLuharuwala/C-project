@@ -19,11 +19,13 @@ void enableRawMode(){
 	raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
 	raw.c_oflag &= ~(OPOST);
 	raw.c_cflag &= ~(CS8);
-	raw.c_cc[VMIN] = 0;
+	raw.c_cc[VMIN] = 1;
 	raw.c_cc[VTIME] = 1;
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 
 }
+//VMIN sets min number of bytes needed before read() can return
+//VTIME value sets the maximum amount of time to wait before read() returns
 //BRKINT causes a SIGINT signal to be sent like Ctrl C
 ////INPCK enables partity cehcking
 ////ISTRIP casues 8th bit to be stripped
