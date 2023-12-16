@@ -18,4 +18,19 @@ tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
 
 we restore the original terminal attributes for the user
 we save a copy of termios struct in its original state and use setattr to apply it to terminal
- 
+
+
+escape sequence is made of 3 bytes \x1b followed by 3 bytes of [ J 
+write() and STDOUT_FILENO come from <unistd.h>
+
+the 4 in our write() call means we are writing 4 bytes out to the terminal, the first byte is \x1b which is the escape character or 27 in decimal, the other three bytes are [2J
+
+Escape sequence always start with an escape character 27 followed by [ character. Escape sequences instruct the terminal to do various text formatting tasks, coloring text moving the cursor around, clearing parts of the screen.
+
+we use J command Erase in Display 
+ESC [ Ps J 
+default 0 - erases some or all of characters in the display 
+1 - erase form the start of the screen to active position inclusive
+2- erase all of the display- all lines are erased, changed to single-width and cursor does not move.
+
+
